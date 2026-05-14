@@ -90,7 +90,7 @@ const BG_PRESETS = [
 function BgCard({ preset, active, onSelect, customUrl, onUpload, onDelete }) {
   return (
     <button
-      onClick={() => preset.isCustom ? null : onSelect(preset.id)}
+      onClick={() => preset.isCustom ? onUpload() : onSelect(preset.id)}
       className="relative group text-left transition-all duration-300 focus:outline-none"
     >
       <div
@@ -314,10 +314,7 @@ export default function Settings() {
     if (filename) {
       const url = `bg://${filename}`
       setCustomBgUrl(url)
-      // Apply immediately
-      document.documentElement.setAttribute('data-bg', 'custom')
-      document.documentElement.style.setProperty('--custom-bg-url', `url("${url}")`)
-      window.api?.setSetting?.('bg_theme', 'custom')
+      applyBg('custom', url)
       toast('Pozadinska slika postavljena!', 'success')
     }
   }
@@ -325,16 +322,22 @@ export default function Settings() {
   const handleDeleteCustomBg = async () => {
     await window.api.deleteCustomBg?.()
     setCustomBgUrl(null)
-    if (bgTheme === 'custom') applyBg('none')
+    applyBg('none')
     toast('Vlastita pozadina obrisana')
   }
 
   const handleSelectBg = (id) => {
     if (id === 'custom') {
-      handleUploadCustomBg()
+      if (customBgUrl) {
+        // Already have custom image — just apply it
+        applyBg('custom', customBgUrl)
+        toast('Vlastita pozadina aktivirana!', 'success')
+      } else {
+        handleUploadCustomBg()
+      }
     } else {
       applyBg(id)
-      toast(`Pozadina promijenjena: ${BG_PRESETS.find(b => b.id === id)?.name}`, 'success')
+      toast(`Pozadina: ${BG_PRESETS.find(b => b.id === id)?.name}`, 'success')
     }
   }
 
