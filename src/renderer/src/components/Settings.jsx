@@ -273,11 +273,11 @@ function ActionRow({ icon: Icon, label, description, action, actionLabel, danger
 // ─── MAIN SETTINGS ───────────────────────────────────────────────────────────
 
 export default function Settings() {
-  const { toast, refresh, theme, applyTheme, bgTheme, applyBg } = useApp()
+  const { toast, refresh, theme, applyTheme, bgTheme, bgCustomUrl: ctxCustomUrl, setBgCustomUrl, applyBg } = useApp()
   const [version, setVersion]     = useState('—')
   const [dataPath, setDataPath]   = useState('—')
   const [loading, setLoading]     = useState(false)
-  const [customBgUrl, setCustomBgUrl] = useState(null)
+  const [customBgUrl, setCustomBgUrl] = useState(ctxCustomUrl || null)
 
   useEffect(() => {
     window.api.getVersion().then(setVersion).catch(() => {})
@@ -314,6 +314,7 @@ export default function Settings() {
     if (filename) {
       const url = `bg://${filename}`
       setCustomBgUrl(url)
+      setBgCustomUrl?.(url)
       applyBg('custom', url)
       toast('Pozadinska slika postavljena!', 'success')
     }
