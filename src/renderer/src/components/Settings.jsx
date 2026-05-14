@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { applyBg as applyBgDirect, BG_MAP } from '../utils/bgEngine'
 import { useApp } from '../App'
 import {
   Settings as SettingsIcon, Database, FolderOpen, Upload, Download,
@@ -315,7 +316,8 @@ export default function Settings() {
       const url = `bg://${filename}`
       setCustomBgUrl(url)
       setBgCustomUrl?.(url)
-      applyBg('custom', url)
+      applyBgDirect('custom', url)   // DIRECT DOM
+      applyBg('custom', url)         // context for persistence
       toast('Pozadinska slika postavljena!', 'success')
     }
   }
@@ -330,15 +332,16 @@ export default function Settings() {
   const handleSelectBg = (id) => {
     if (id === 'custom') {
       if (customBgUrl) {
-        // Already have custom image — just apply it
-        applyBg('custom', customBgUrl)
+        applyBgDirect('custom', customBgUrl)
+        applyBg('custom', customBgUrl)  // also update context for persistence
         toast('Vlastita pozadina aktivirana!', 'success')
       } else {
         handleUploadCustomBg()
       }
     } else {
-      applyBg(id)
-      toast(`Pozadina: ${BG_PRESETS.find(b => b.id === id)?.name}`, 'success')
+      applyBgDirect(id)      // DIRECT DOM — instant, no context needed
+      applyBg(id)            // update context for persistence
+      toast(`Pozadina: ${BG_PRESETS.find(b => b.id === id)?.name || id}`, 'success')
     }
   }
 
@@ -424,7 +427,7 @@ export default function Settings() {
               </button>
             )}
             {bgTheme !== 'none' && (
-              <button onClick={() => { applyBg('none'); toast('Pozadina uklonjena') }} className="btn-ghost text-xs py-2">
+              <button onClick={() => { applyBgDirect('none'); applyBg('none'); toast('Pozadina uklonjena') }} className="btn-ghost text-xs py-2">
                 <X size={12} />
                 Ukloni pozadinu
               </button>
