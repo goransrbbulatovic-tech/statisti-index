@@ -14,62 +14,7 @@ import Settings from './components/Settings'
 import Toast from './components/Toast'
 
 // ─── BACKGROUND ENGINE ──────────────────────────────────────────────────────
-const BG_GRADIENTS = {
-  'noir':      'repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.05) 2px,rgba(0,0,0,0.05) 4px),radial-gradient(ellipse at 20% 50%,rgba(40,30,10,0.5) 0%,transparent 60%),linear-gradient(160deg,#0a0805 0%,#0f0c08 40%,#060408 100%)',
-  'cinema-red':'radial-gradient(ellipse at 0% 0%,rgba(140,20,20,0.5) 0%,transparent 50%),radial-gradient(ellipse at 100% 100%,rgba(120,10,10,0.4) 0%,transparent 50%),linear-gradient(135deg,#0d0404 0%,#180808 50%,#0a0404 100%)',
-  'cosmos':    'radial-gradient(2px 2px at 15% 25%,rgba(255,255,255,0.8) 0%,transparent 100%),radial-gradient(1px 1px at 55% 10%,rgba(255,255,255,0.9) 0%,transparent 100%),radial-gradient(2px 2px at 80% 60%,rgba(255,255,255,0.7) 0%,transparent 100%),radial-gradient(1px 1px at 35% 80%,rgba(255,255,255,0.6) 0%,transparent 100%),radial-gradient(3px 3px at 50% 45%,rgba(147,197,253,0.5) 0%,transparent 100%),radial-gradient(ellipse at 30% 40%,rgba(29,78,216,0.25) 0%,transparent 50%),radial-gradient(ellipse at 70% 70%,rgba(109,40,217,0.2) 0%,transparent 50%),linear-gradient(160deg,#020408 0%,#030510 50%,#020208 100%)',
-  'golden':    'radial-gradient(ellipse at 0% 100%,rgba(180,80,20,0.4) 0%,transparent 50%),radial-gradient(ellipse at 100% 0%,rgba(200,130,10,0.35) 0%,transparent 50%),linear-gradient(160deg,#0c0802 0%,#160f03 40%,#080600 100%)',
-  'neon-city': 'radial-gradient(ellipse at 10% 90%,rgba(236,72,153,0.3) 0%,transparent 40%),radial-gradient(ellipse at 90% 10%,rgba(34,211,238,0.25) 0%,transparent 40%),radial-gradient(ellipse at 50% 50%,rgba(139,92,246,0.15) 0%,transparent 50%),linear-gradient(160deg,#030208 0%,#05030c 50%,#020108 100%)',
-  'forest':    'radial-gradient(ellipse at 20% 80%,rgba(20,80,30,0.4) 0%,transparent 50%),radial-gradient(ellipse at 80% 20%,rgba(10,60,20,0.3) 0%,transparent 50%),linear-gradient(160deg,#020a04 0%,#050f06 50%,#010802 100%)',
-  'ocean':     'radial-gradient(ellipse at 50% 0%,rgba(14,116,144,0.25) 0%,transparent 60%),radial-gradient(ellipse at 20% 70%,rgba(3,105,161,0.2) 0%,transparent 50%),linear-gradient(180deg,#020810 0%,#030c18 50%,#01080e 100%)',
-}
-
-// Apply bg directly to body — most reliable, no React re-render needed
-function applyBgToDom(bg, customUrl) {
-  // Always inject/update a dedicated style tag
-  let s = document.getElementById('__acmigo_bg__')
-  if (!s) { s = document.createElement('style'); s.id = '__acmigo_bg__'; document.head.prepend(s) }
-
-  if (!bg || bg === 'none') {
-    s.textContent = ''
-    return
-  }
-
-  let bgImage = ''
-  if (bg === 'custom' && customUrl) {
-    bgImage = `linear-gradient(rgba(0,0,0,0.5),rgba(0,0,0,0.5)),url("${customUrl}")`
-  } else {
-    bgImage = BG_GRADIENTS[bg] || ''
-  }
-
-  if (!bgImage) return
-
-  s.textContent = `
-    html { 
-      background-image: ${bgImage} !important;
-      background-size: cover !important;
-      background-position: center !important;
-      background-attachment: fixed !important;
-    }
-    body, #root, #root > div {
-      background: transparent !important;
-    }
-    aside {
-      background-color: rgba(5,5,12,0.82) !important;
-      backdrop-filter: blur(20px) !important;
-      -webkit-backdrop-filter: blur(20px) !important;
-    }
-    .card {
-      background-color: rgba(18,18,30,0.80) !important;
-      backdrop-filter: blur(12px) !important;
-      -webkit-backdrop-filter: blur(12px) !important;
-    }
-    .modal-content {
-      background-color: rgba(14,14,22,0.97) !important;
-      backdrop-filter: blur(20px) !important;
-    }
-  `
-}
+import { applyBg as applyBgToDom } from './utils/bgEngine'
 
 export const AppContext = createContext(null)
 export const useApp = () => useContext(AppContext)
